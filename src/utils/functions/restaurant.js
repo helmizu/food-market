@@ -1,4 +1,6 @@
 import { collection, addDoc, getDocs, getFirestore } from "firebase/firestore";
+import getDistance from 'geolib/es/getDistance';
+import { getUserLocation } from '../storage';
 
 export const addRestaurant = async (data = {}) => {
   const db = getFirestore();
@@ -10,9 +12,13 @@ export const getRestaurants = async () => {
   const db = getFirestore();
   const querySnapshot = await getDocs(collection(db, "restaurants"));
   const data = [];
+  const userCoords = getUserLocation();
   await querySnapshot.forEach((doc) => {
-    const item = { id: doc.id, ...doc.data() };
-    data.push(item)
+    const item = doc.data();
+    const restoCoords = item.latlng ? { latitude: item.latlng.split(',')[0], longitude: item.latlng.split(',')[1] } : null;
+    const distanceInMeters = restoCoords && userCoords ? getDistance(userCoords, restoCoords) : 0;
+    const distance = `${(distanceInMeters / 1000).toFixed(1)} km`;
+    data.push({ id: doc.id, ...item, distance })
   });
   return data;
 }

@@ -2,17 +2,18 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
-import { Navigate, Outlet } from 'react-router-dom';
+// import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useGeolocated } from 'react-geolocated';
 import Header from './Header';
-import { useAuthContext } from '../utils/AuthProvider';
+// import { useAuthContext } from '../utils/AuthProvider';
 import { setUserLocation } from '../utils/storage';
 
 export default function Layout() {
-  const { auth } = useAuthContext();
-  if (!auth) {
-    return <Navigate to='/login' replace />
-  }
+  // const { auth } = useAuthContext();
+  // if (!auth) {
+  //   return <Navigate to='/login' replace />
+  // }
 
   const { coords } = useGeolocated({
     positionOptions: {

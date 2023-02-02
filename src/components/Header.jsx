@@ -7,10 +7,13 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useAuthContext } from '../utils/AuthProvider';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const { auth, signout } = useAuthContext();
-  const [anchorEl, setAnchorEl] = React.useState(null);  
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     signout();
@@ -67,6 +70,9 @@ export default function Header() {
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>
+        )}
+        {!auth && (
+          <Button onClick={() => navigate('/login', { state: { from: location.pathname } })}>Login</Button>
         )}
       </Toolbar>
     </AppBar>

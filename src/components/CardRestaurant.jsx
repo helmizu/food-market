@@ -6,8 +6,6 @@ import Typography from '@mui/material/Typography';
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
 import Box from '@mui/material/Box';
 import { Link } from 'react-router-dom';
-import getDistance from 'geolib/es/getDistance';
-import { getUserLocation } from '../utils/storage';
 
 const bull = (
   <Box
@@ -18,11 +16,7 @@ const bull = (
   </Box>
 );
 
-const CardRestaurant = ({ image, name, rating, latlng, city, url }) => {
-  const userCoords = getUserLocation();
-  const restoCoords = latlng ? { latitude: latlng.split(',')[0], longitude: latlng.split(',')[1] } : null;
-  const distanceInMeters = restoCoords && userCoords ? getDistance(userCoords, restoCoords) : 0;
-  const distance = distanceInMeters ? `${(distanceInMeters / 1000).toFixed(1)} km` : city;
+const CardRestaurant = ({ image, name, rating, distance, city, url }) => {
 
   return (
     <Link to={url}>
@@ -38,6 +32,9 @@ const CardRestaurant = ({ image, name, rating, latlng, city, url }) => {
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ display: 'inline-flex', gap: 0.5 }} component="div">
             <StarRoundedIcon color="warning" fontSize='small' /> {rating} {bull} {distance}
+          </Typography>
+          <Typography variant="body1" color="text.secondary" component="div">
+            {city}
           </Typography>
         </CardContent>
       </Card>

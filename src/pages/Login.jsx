@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import { useAuthContext } from '../utils/AuthProvider';
 
@@ -14,6 +14,7 @@ const schema = yup.object({
 
 const Login = () => {
   const { auth, signin, singining } = useAuthContext();
+  const location = useLocation();
   const { control, handleSubmit } = useForm({
     defaultValues: {
       email: '',
@@ -26,7 +27,8 @@ const Login = () => {
   };
   
   if (!!auth) {
-    return <Navigate to="/" replace />
+    const redirectPath = location.state?.from || '/';
+    return <Navigate to={redirectPath} replace />
   }
 
   return (
