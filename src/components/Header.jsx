@@ -6,16 +6,21 @@ import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import HistoryIcon from '@mui/icons-material/HistoryRounded';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useAuthContext } from '../utils/AuthProvider';
 import { Badge, Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { getCart } from '../utils/functions/cart';
+import { getUserLocation } from '../utils/storage';
+import { reverseGeocode } from '../utils/functions/geolocation';
 
 export default function Header() {
   const { auth, signout } = useAuthContext();
+  const { latitude = '', longitude = '' } = getUserLocation();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [city, setCity] = React.useState('Unknown');
   const navigate = useNavigate();
   const { items = [] } = getCart();
 
@@ -31,6 +36,19 @@ export default function Header() {
     setAnchorEl(null);
   };
 
+  const mapLocation = async () => {
+    try {
+      const location = await reverseGeocode(`${latitude},${longitude}`);
+      setCity(location.city)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  React.useEffect(() => {
+    if (latitude && longitude) mapLocation();
+  }, [])
+
   return (
     <AppBar
       position="fixed"
@@ -44,6 +62,10 @@ export default function Header() {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate('/')}>
           Food Market
         </Typography>
+        <Box display="flex" flexDirection="row" gap={1} alignItems="center" flexGrow={1} ml={28}>
+          <LocationOnIcon color="error" sx={{ mt: '-4px' }} />
+          <Typography>{city}</Typography>
+        </Box>
         {!!auth && (
           <IconButton
             size="large"

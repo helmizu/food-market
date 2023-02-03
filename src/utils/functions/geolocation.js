@@ -27,26 +27,6 @@ const mapAddress = (result = []) => {
   }
 }
 
-const mapDistance = (rows = []) => {
-  if (rows?.length) {
-    const elements = result[0];
-    if (elements?.length) {
-      const detail = elements[0];
-      const distance = detail.distance.text;
-      const raw = detail.distance.value;
-
-      return {
-        distance,
-        raw
-      }
-    }
-  }
-  return {
-    distance: '',
-    raw: 0,
-  }
-}
-
 export const reverseGeocode = async (latlng = '') => {
   try {
     var config = {
