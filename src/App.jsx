@@ -10,6 +10,8 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Restaurant from './pages/Restaurant';
+import Cart from './pages/Cart';
+
 const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -25,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: '/restaurant/:id',
         element: <Restaurant />,
+      },
+      {
+        path: '/cart',
+        element: <Cart />,
       },
     ],
   },

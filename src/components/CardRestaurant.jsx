@@ -34,7 +34,7 @@ const CardRestaurant = ({ image, name, rating, distance, city, url }) => {
             <StarRoundedIcon color="warning" fontSize='small' /> {rating} {bull} {distance}
           </Typography>
           <Typography variant="body1" color="text.secondary" component="div">
-            {city}
+            {city || `-`}
           </Typography>
         </CardContent>
       </Card>

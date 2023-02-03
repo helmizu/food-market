@@ -4,16 +4,19 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useAuthContext } from '../utils/AuthProvider';
-import { Button } from '@mui/material';
+import { Badge, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { getCart } from '../utils/functions/cart';
 
 export default function Header() {
   const { auth, signout } = useAuthContext();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate();
+  const { items = [] } = getCart();
 
   const handleLogout = () => {
     signout();
@@ -37,16 +40,22 @@ export default function Header() {
       }}
     >
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate('/')}>
           Food Market
         </Typography>
+        <IconButton
+          size="large"
+          onClick={() => navigate('/cart')}
+          color="inherit"
+        >
+          <Badge color="primary" variant="dot" invisible={!items.length}>
+            <CartIcon />
+          </Badge>
+        </IconButton>
         {!!auth && (
           <div>
             <IconButton
               size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
               onClick={handleMenu}
               color="inherit"
             >

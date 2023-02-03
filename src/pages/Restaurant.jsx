@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Chip, Container, Grid, Stack, Tab, Tabs, Typography, Badge, IconButton } from '@mui/material'
+import { Box, Chip, Container, Grid, Stack, Tab, Tabs, Typography, Badge, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material'
 import ThumbUpRoundedIcon from '@mui/icons-material/ThumbUpRounded';
 import CircleIcon from '@mui/icons-material/Circle';
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
@@ -8,7 +8,7 @@ import MoneyIcon from '@mui/icons-material/AttachMoneyRounded';
 import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import CardMenu from '../components/CardMenu';
 import { getMenuByRestaurant } from '../utils/functions/menu';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getArrayUnique, getPriceRange } from '../utils/formatter';
 import { addToCart, getCart } from '../utils/functions/cart';
 import { getRestaurant } from '../utils/functions/restaurant';
@@ -18,7 +18,7 @@ const useRestaurant = () => {
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState({ id: '', items: [] });
-  const [dialogResetCart, setDialogResetCart] = useState(false);
+  const [dialogResetCart, setDialogResetCart] = useState(null);
   const { id = '' } = useParams();
   const menuTypes = getArrayUnique(menu.map(item => item.type))
   const menuMapped = menuTypes.map(type => ({ label: type, data: menu.filter(item => item.type === type) }));
@@ -64,11 +64,17 @@ const useRestaurant = () => {
       getCartFromStorage();
     } else if (existingCart.id !== data.restaurantId) {
       console.log('reset')
-      setDialogResetCart(true);
+      setDialogResetCart(data);
     } else {
       addToCart(data);
       getCartFromStorage();
     }
+  }
+
+  const resetCart = (data) => {
+    addToCart(data);
+    getCartFromStorage();
+    setDialogResetCart(null);
   }
 
   useEffect(() => {
@@ -86,14 +92,28 @@ const useRestaurant = () => {
     cart,
     updateCart,
     dialogResetCart,
+    closeDialog: () => setDialogResetCart(null),
     loading,
+    resetCart,
   }
 }
 
 const Restaurant = () => {
   const [tab, setTab] = React.useState(0);
+  const navigate = useNavigate();
 
-  const { restaurant, menuTypes, priceRange, menuMapped, loading, cart, updateCart } = useRestaurant();
+  const {
+    restaurant,
+    menuTypes,
+    priceRange,
+    menuMapped,
+    loading,
+    cart,
+    updateCart,
+    dialogResetCart,
+    closeDialog,
+    resetCart,
+  } = useRestaurant();
   const cartItems = cart.items || [];
   console.log({ loading, restaurant })
 
@@ -142,7 +162,7 @@ const Restaurant = () => {
             <Grid container alignItems={{ sx: 'flex-start', sm: "center" }} spacing={2}>
               <Grid item xs={4} sm="auto">
                 <Stack spacing={1} py={1} alignItems="center">
-                  <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center" sx={{ height: 24, width: 84 }}>
+                  <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center" sx={{ height: 24, width: 92 }}>
                     <StarRoundedIcon color="warning" fontSize="small" sx={{ mt: '-2px' }} />
                     <Typography component="div" variant="body2" fontWeight={600}>
                       {restaurant.rating}
@@ -153,7 +173,7 @@ const Restaurant = () => {
               </Grid>
               <Grid item xs={4} sm="auto">
                 <Stack spacing={1} py={1} alignItems="center">
-                  <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center" sx={{ height: 24, width: 84 }}>
+                  <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center" sx={{ height: 24, width: 92 }}>
                     <LocationOnIcon color="error" fontSize="small" sx={{ mt: '-2px' }} />
                     <Typography component="div" variant="body2" fontWeight={600}>
                       {restaurant.distance}
@@ -164,7 +184,7 @@ const Restaurant = () => {
               </Grid>
               <Grid item xs={4} sm="auto">
                 <Stack spacing={1} py={1} alignItems="center">
-                  <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center" sx={{ height: 24, width: 84 }}>
+                  <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center" sx={{ height: 24, width: 92 }}>
                     <MoneyIcon fontSize="small" sx={{ mt: '-2px' }} />
                     <Typography component="div" variant="body2" fontWeight={600}>
                       {priceRange}
@@ -188,7 +208,6 @@ const Restaurant = () => {
             <Tab label="Menu" />
           </Tabs>
         </Box>
-
         {menuMapped.map(section => (
           <Box key={section.label} mb={4}>
             <Typography variant="h6" py={1}>{section.label}</Typography>
@@ -208,16 +227,40 @@ const Restaurant = () => {
             </Grid>
           </Box>
         ))}
-
-
       </section>
+
       <Box sx={{ position: 'fixed', right: 40, bottom: 40 }}>
-        <Badge color="primary" overlap="circular" badgeContent={1}>
-          <IconButton size="large" sx={{ bgcolor: 'error.main', color: 'common.white', boxShadow: theme => theme.shadows[2], '&:hover': { color: 'error.main' } }}>
+        <Badge color="primary" overlap="circular" badgeContent={cartItems.length}>
+          <IconButton
+            size="large"
+            sx={{ bgcolor: 'error.main', color: 'common.white', boxShadow: theme => theme.shadows[2], '&:hover': { color: 'error.main' } }}
+            onClick={() => navigate('/cart')}
+          >
             <CartIcon />
           </IconButton>
         </Badge>
       </Box>
+
+      <Dialog
+        open={!!dialogResetCart}
+        onClose={closeDialog}
+        maxWidth="xs"
+      >
+        <DialogTitle>
+          Want to order from this resto instead?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Sure thing, but we'll need to clear the items in your current cart from previous resto first.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={closeDialog}>cancel</Button>
+          <Button variant="contained" onClick={() => resetCart(dialogResetCart)} autoFocus>
+            Yes, go ahead
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container >
   )
 }
