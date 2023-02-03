@@ -18,7 +18,7 @@ import { reverseGeocode } from '../utils/functions/geolocation';
 
 export default function Header() {
   const { auth, signout } = useAuthContext();
-  const { latitude = '', longitude = '' } = getUserLocation() || {};
+  const { latitude = '', longitude = '' } = getUserLocation();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [city, setCity] = React.useState('Unknown');
   const navigate = useNavigate();
@@ -59,66 +59,70 @@ export default function Header() {
       }}
     >
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate('/')}>
-          Food Market
-        </Typography>
-        <Box display="flex" flexDirection="row" gap={1} alignItems="center" flexGrow={1} ml={28}>
+        <Box width={400}>
+          <Typography variant="h6" component="div" sx={{ width: 'fit-content', cursor: 'pointer' }} onClick={() => navigate('/')}>
+            Food Market
+          </Typography>
+        </Box>
+        <Box display="flex" flexDirection="row" gap={1} alignItems="center" justifyContent="center" flexGrow={1}>
           <LocationOnIcon color="error" sx={{ mt: '-4px' }} />
           <Typography>{city}</Typography>
         </Box>
-        {!!auth && (
+        <Box display="flex" flexDirection="row" width={400} justifyContent="flex-end" alignItems="center">
+          {!!auth && (
+            <IconButton
+              size="large"
+              onClick={() => navigate('/order')}
+              color="inherit"
+            >
+              <Badge color="primary" variant="dot" invisible={!items.length}>
+                <HistoryIcon />
+              </Badge>
+            </IconButton>
+          )}
           <IconButton
             size="large"
-            onClick={() => navigate('/order')}
+            onClick={() => navigate('/cart')}
             color="inherit"
           >
             <Badge color="primary" variant="dot" invisible={!items.length}>
-              <HistoryIcon />
+              <CartIcon />
             </Badge>
           </IconButton>
-        )}
-        <IconButton
-          size="large"
-          onClick={() => navigate('/cart')}
-          color="inherit"
-        >
-          <Badge color="primary" variant="dot" invisible={!items.length}>
-            <CartIcon />
-          </Badge>
-        </IconButton>
-        {!!auth && (
-          <Box display="flex" flexDirection="row" gap={1} alignItems="center">
-            <Typography ml={1}>{auth.email}</Typography>
-            <IconButton
-              size="large"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            </Menu>
-          </Box>
-        )}
-        {!auth && (
-          <Button onClick={() => navigate('/login', { state: { from: location.pathname } })}>Login</Button>
-        )}
+          {!!auth && (
+            <Box display="flex" flexDirection="row" gap={1} alignItems="center">
+              <Typography ml={1}>{auth.email}</Typography>
+              <IconButton
+                size="large"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
+            </Box>
+          )}
+          {!auth && (
+            <Button onClick={() => navigate('/login', { state: { from: location.pathname } })}>Login</Button>
+          )}
+        </Box>
       </Toolbar>
-    </AppBar>
+    </AppBar >
   );
 }
