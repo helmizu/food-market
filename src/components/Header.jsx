@@ -18,7 +18,7 @@ import { reverseGeocode } from '../utils/functions/geolocation';
 
 export default function Header() {
   const { auth, signout } = useAuthContext();
-  const { latitude = '', longitude = '' } = getUserLocation();
+  const { latitude = '', longitude = '' } = getUserLocation() || {};
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [city, setCity] = React.useState('Unknown');
   const navigate = useNavigate();

@@ -21,7 +21,7 @@ export const setUserLocation = (coords) => {
 
 export const getUserLocation = () => {
   const location = localStorage.getItem('USER_LOCATION');
-  if (!location) return null;
+  if (!location) return {};
   const locationJSON = JSON.parse(location);
   return locationJSON;
 }
