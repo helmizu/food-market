@@ -9,6 +9,7 @@ import './App.css';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Home from './pages/Home';
+import Restaurant from './pages/Restaurant';
 const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -16,6 +17,14 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Home />,
+      },
+      {
+        path: '/restaurant',
+        element: <Restaurant />,
+      },
+      {
+        path: '/restaurant/:id',
+        element: <Restaurant />,
       },
     ],
   },

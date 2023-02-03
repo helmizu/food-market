@@ -29,3 +29,19 @@ export const getUserLocation = () => {
 export const deleteUserLocation = () => {
   localStorage.removeItem('USER_LOCATION');
 }
+
+export const setUserCart = (cart) => {
+  const cartStringify = JSON.stringify(cart);
+  localStorage.setItem('USER_CART', cartStringify);
+}
+
+export const getUserCart = () => {
+  const cart = localStorage.getItem('USER_CART');
+  if (!cart) return null;
+  const cartJSON = JSON.parse(cart);
+  return cartJSON;
+}
+
+export const deleteUserCart = () => {
+  localStorage.removeItem('USER_CART');
+}
