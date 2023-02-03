@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
+import HistoryIcon from '@mui/icons-material/HistoryRounded';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useAuthContext } from '../utils/AuthProvider';
@@ -43,6 +44,17 @@ export default function Header() {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate('/')}>
           Food Market
         </Typography>
+        {!!auth && (
+          <IconButton
+            size="large"
+            onClick={() => navigate('/order')}
+            color="inherit"
+          >
+            <Badge color="primary" variant="dot" invisible={!items.length}>
+              <HistoryIcon />
+            </Badge>
+          </IconButton>
+        )}
         <IconButton
           size="large"
           onClick={() => navigate('/cart')}

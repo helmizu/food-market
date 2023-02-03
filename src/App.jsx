@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import Restaurant from './pages/Restaurant';
 import Cart from './pages/Cart';
+import Order from './pages/Order';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: '/cart',
         element: <Cart />,
+      },
+      {
+        path: '/order',
+        element: <Order />,
       },
     ],
   },

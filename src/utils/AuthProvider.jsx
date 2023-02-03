@@ -1,5 +1,5 @@
 import React from 'react'
-import { getUser, setUser, deleteUser } from './storage';
+import { getUser, setUser, deleteUser, deleteUserCart } from './storage';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 
 const AuthContext = React.createContext({
@@ -38,6 +38,7 @@ const AuthProvider = ({ children }) => {
     signOut(authRef);
     setAuth(null);
     deleteUser();
+    deleteUserCart();
   }
 
   const memoizedAuth = React.useMemo(() => ({

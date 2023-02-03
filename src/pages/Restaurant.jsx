@@ -12,13 +12,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getArrayUnique, getPriceRange } from '../utils/formatter';
 import { addToCart, getCart } from '../utils/functions/cart';
 import { getRestaurant } from '../utils/functions/restaurant';
+import { useAuthContext } from '../utils/AuthProvider';
 
 const useRestaurant = () => {
+  const { auth } = useAuthContext();
   const [restaurant, setRestaurant] = useState({});
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState({ id: '', items: [] });
   const [dialogResetCart, setDialogResetCart] = useState(null);
+  const [dialogAuth, setDialogAuth] = useState(false);
   const { id = '' } = useParams();
   const menuTypes = getArrayUnique(menu.map(item => item.type))
   const menuMapped = menuTypes.map(type => ({ label: type, data: menu.filter(item => item.type === type) }));
@@ -58,6 +61,7 @@ const useRestaurant = () => {
   };
 
   const updateCart = (data) => {
+    if (!auth) return setDialogAuth(true);
     const existingCart = getCart();
     if (!existingCart.id) {
       addToCart(data);
@@ -95,6 +99,7 @@ const useRestaurant = () => {
     closeDialog: () => setDialogResetCart(null),
     loading,
     resetCart,
+    dialogAuth,
   }
 }
 
@@ -113,6 +118,7 @@ const Restaurant = () => {
     dialogResetCart,
     closeDialog,
     resetCart,
+    dialogAuth,
   } = useRestaurant();
   const cartItems = cart.items || [];
   console.log({ loading, restaurant })
@@ -240,6 +246,28 @@ const Restaurant = () => {
           </IconButton>
         </Badge>
       </Box>
+
+
+
+      <Dialog
+        open={dialogAuth}
+        maxWidth="xs"
+      >
+        <DialogTitle>
+          Please Login to Add Item to Your Cart!
+        </DialogTitle>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => navigate('/login', { state: { from: location.pathname } })}
+            autoFocus
+            color="primary"
+          >
+            Login
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog
         open={!!dialogResetCart}

@@ -61,6 +61,7 @@ const useCart = () => {
         restaurantId: restaurant.id,
         restaurantCity: restaurant.city,
         restaurantAddress: restaurant.address,
+        restaurantImage: restaurant.imageUrl,
         transactions,
         totalProductPrice,
         otherPrice,
@@ -98,13 +99,25 @@ const useCart = () => {
 }
 
 const Cart = () => {
-  const { restaurant, transactions, cartItems, updateCart, totalProductPrice, otherPrice, checkout, dialogSuccess, closeDialog } = useCart();
+  const { auth } = useAuthContext();
   const navigate = useNavigate()
+  const { restaurant, transactions, cartItems, updateCart, totalProductPrice, otherPrice, checkout, dialogSuccess, closeDialog, cart } = useCart();
 
   const onCloseDialog = () => {
     closeDialog();
-    navigate('/');
+    navigate('/order');
     deleteUserCart();
+  }
+
+  if (!auth) {
+    return (
+      <Box display="flex" flexDirection="column" textAlign="center" alignItems="center" justifyContent="center" sx={{ height: 'calc(100vh - 120px)' }}>
+        <Typography variant="h5">
+          Please Login to Access Your Cart!
+        </Typography>
+        <Button variant="outlined" sx={{ width: 300, mt: 3 }} onClick={() => navigate('/login', { state: { from: restaurant.id ? location.pathname : '/' } })}>Login</Button>
+      </Box>
+    )
   }
 
   return (
@@ -127,9 +140,11 @@ const Cart = () => {
                     />
                   ))}
                 </Stack>
-                <Box display="flex" pt={3} alignItems="flex-end" justifyContent="flex-end">
-                  <Button variant="outlined" onClick={() => navigate(`/restaurant/${restaurant.id}`)}>Add more</Button>
-                </Box>
+                {!!cart.id && (
+                  <Box display="flex" pt={3} alignItems="flex-end" justifyContent="flex-end">
+                    <Button variant="outlined" onClick={() => navigate(`/restaurant/${restaurant.id}`)}>Add more</Button>
+                  </Box>
+                )}
               </Box>
             </Grid>
             <Grid item sm={4} xs={12}>
@@ -150,7 +165,7 @@ const Cart = () => {
                   <Typography variant="subtitle1" fontWeight={500}>Total Price</Typography>
                   <Typography variant="body1" color="info.main">{formatToIdr(totalProductPrice + otherPrice)}</Typography>
                 </Stack>
-                <Button variant="contained" fullWidth onClick={checkout}>
+                <Button variant="contained" fullWidth onClick={checkout} disabled={!cartItems?.length}>
                   Checkout
                 </Button>
               </Box>
