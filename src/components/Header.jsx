@@ -9,7 +9,7 @@ import HistoryIcon from '@mui/icons-material/HistoryRounded';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useAuthContext } from '../utils/AuthProvider';
-import { Badge, Button } from '@mui/material';
+import { Badge, Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { getCart } from '../utils/functions/cart';
 
@@ -65,7 +65,8 @@ export default function Header() {
           </Badge>
         </IconButton>
         {!!auth && (
-          <div>
+          <Box display="flex" flexDirection="row" gap={1} alignItems="center">
+            <Typography ml={1}>{auth.email}</Typography>
             <IconButton
               size="large"
               onClick={handleMenu}
@@ -90,7 +91,7 @@ export default function Header() {
             >
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
-          </div>
+          </Box>
         )}
         {!auth && (
           <Button onClick={() => navigate('/login', { state: { from: location.pathname } })}>Login</Button>
